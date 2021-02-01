@@ -1,65 +1,81 @@
-import React, { Component } from 'react';
+// import React, { Component } from 'react';
+import { useState } from 'react';
+import { connect } from 'react-redux';
+import { addContact } from '../../redux/contacts-actions';
 import PropTypes from 'prop-types';
-import { v4 as uuid4 } from 'uuid';
+// import { v4 as uuid4 } from 'uuid';
 import ContactFormStl from './ContactForm.module.css';
 
-class ContactForm extends Component {
-  state = {
-    name: '',
-    number: '',
-  };
+function ContactForm({ contacts, onAddContact }) {
+  const [contactName, setContactName] = useState('');
+  const [contactNumber, setContactNumber] = useState('');
 
-  onInputValue = e => {
+  const onInputValue = e => {
     const { name, value } = e.target;
-    this.setState({ [name]: value });
+    switch (name) {
+      case 'contactName':
+        setContactName(value);
+        break;
+      case 'contactNumber':
+        setContactNumber(value);
+        break;
+      default:
+        break;
+    }
   };
 
-  onSubmitContact = e => {
+  const onSubmitContact = e => {
     e.preventDefault();
-    const { name, number } = this.state;
-
-    this.props.onAddContact(name, number);
-    this.setState({ name: '', number: '' });
+    if (contacts.some(contact => contact.name === contactName)) {
+      alert(`${contactName} is already in Contacts`);
+      return;
+    }
+    onAddContact(contactName, contactNumber);
+    setContactName('');
+    setContactNumber('');
   };
 
-  render() {
-    const { name, number } = this.state;
-    return (
-      <form
-        onSubmit={this.onSubmitContact}
-        className={ContactFormStl.ContactForm}
-        id={uuid4()}
-      >
-        <label className={ContactFormStl.label}>
-          Name
-          <input
-            type="text"
-            value={name}
-            onChange={this.onInputValue}
-            name="name"
-            className={ContactFormStl.input}
-          />
-        </label>
-        <label className={ContactFormStl.label}>
-          Phone Number
-          <input
-            type="text"
-            value={number}
-            onChange={this.onInputValue}
-            name="number"
-            className={ContactFormStl.input}
-          />
-        </label>
-        <button type="submit" className={ContactFormStl.buttonSubmit}>
-          Add contact
-        </button>
-      </form>
-    );
-  }
+  return (
+    <form onSubmit={onSubmitContact} className={ContactFormStl.ContactForm}>
+      <label className={ContactFormStl.label}>
+        Name
+        <input
+          type="text"
+          value={contactName}
+          onChange={onInputValue}
+          name="contactName"
+          className={ContactFormStl.input}
+        />
+      </label>
+      <label className={ContactFormStl.label}>
+        Phone Number
+        <input
+          type="text"
+          value={contactNumber}
+          onChange={onInputValue}
+          name="contactNumber"
+          className={ContactFormStl.input}
+        />
+      </label>
+      <button type="submit" className={ContactFormStl.buttonSubmit}>
+        Add contact
+      </button>
+    </form>
+  );
 }
+
+const mapStateToProps = state => {
+  return {
+    contacts: state.contacts.items,
+  };
+};
+
+const mapDispatchToProps = dispatch => ({
+  onAddContact: (name, number) => dispatch(addContact(name, number)),
+});
 
 ContactForm.propTypes = {
   onAddContact: PropTypes.func.isRequired,
 };
 
-export default ContactForm;
+export default connect(mapStateToProps, mapDispatchToProps)(ContactForm);
