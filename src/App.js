@@ -1,12 +1,15 @@
 import { connect } from 'react-redux';
-import * as actions from './redux/contacts-actions';
+// import { useState, useEffect } from 'react';
 import ContactForm from './componnents/ContactForm/ContactForm';
 import ContactsList from './componnents/ContactList/ContactList';
 import Filter from './componnents/Filter/Filter';
 import AppStl from './App.module.css';
 
 function App({ contacts }) {
-  console.log(actions);
+  // useEffect(() => {
+  //
+  //   window.localStorage.setItem('contacts', JSON.stringify(contacts));
+  // }, [contacts]);
 
   return (
     <div className={AppStl.container}>
