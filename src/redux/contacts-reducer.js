@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import actionsTypes from './contacts-actions';
+import actionsTypes from './contacts-types';
 
 const initialState = [
   { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
